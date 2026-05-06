@@ -1,13 +1,20 @@
-﻿<Window x:Class="WinToolkitWPF.MainWindow"
+﻿<Window x:Class="Wintoolkit_.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WinToolkit Pro" Height="650" Width="900" Background="#1e1e1e" WindowStartupLocation="CenterScreen">
+        Title="WinToolkit Pro - Angolo di Windows" Height="750" Width="1050" 
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <!-- Stile per i bottoni del Menù laterale -->
+        <SolidColorBrush x:Key="BgColor" Color="#1e1e1e"/>
+        <SolidColorBrush x:Key="SidebarColor" Color="#252526"/>
+        <SolidColorBrush x:Key="CardColor" Color="#2d2d30"/>
+        <SolidColorBrush x:Key="TextColor" Color="White"/>
+        <SolidColorBrush x:Key="TextMutedColor" Color="#AAAAAA"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#007ACC"/>
+
         <Style x:Key="MenuButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="15,10"/>
@@ -29,19 +36,18 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Stile per i bottoni delle azioni -->
         <Style x:Key="ActionBtn" TargetType="Button">
-            <Setter Property="Background" Value="#2d2d30"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource CardColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="Width" Value="140"/>
+            <Setter Property="Width" Value="150"/>
             <Setter Property="Height" Value="45"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -49,182 +55,261 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#007ACC"/>
+                    <Setter Property="Background" Value="{DynamicResource AccentColor}"/>
+                    <Setter Property="Foreground" Value="White"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid Background="{DynamicResource BgColor}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
-            <!-- Barra laterale -->
+            <ColumnDefinition Width="230"/>
             <ColumnDefinition Width="*"/>
-            <!-- Contenuto -->
         </Grid.ColumnDefinitions>
 
-        <!-- BARRA LATERALE (MENÙ) -->
-        <Border Background="#252526" Grid.Column="0">
-            <StackPanel>
-                <TextBlock Text="🛠️ WinToolkit" Foreground="White" FontSize="22" FontWeight="Bold" Margin="15,20,15,30"/>
-
-                <!-- Uso Font nativo di Windows per le icone -->
-                <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelSistema">
+        <!-- BARRA LATERALE -->
+        <Border Background="{DynamicResource SidebarColor}" Grid.Column="0">
+            <Grid>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Text="🛠️ WinToolkit" Foreground="{DynamicResource TextColor}" FontSize="24" FontWeight="Bold" Margin="15,0,15,30"/>
+                    <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelSistema">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE770;" Margin="0,0,10,0" FontSize="18"/>
+                            <TextBlock Text="Manutenzione"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelSoftware">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE718;" Margin="0,0,10,0" FontSize="18"/>
+                            <TextBlock Text="Installa Software"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelPortable">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE88E;" Margin="0,0,10,0" FontSize="18"/>
+                            <TextBlock Text="Software Portable"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelStato">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE9D9;" Margin="0,0,10,0" FontSize="18"/>
+                            <TextBlock Text="Stato Sistema"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelImpostazioni" VerticalAlignment="Bottom" Margin="0,0,0,20">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE770;" Margin="0,0,10,0" FontSize="18"/>
-                        <TextBlock Text="Manutenzione"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="0,0,10,0" FontSize="18"/>
+                        <TextBlock Text="Impostazioni"/>
                     </StackPanel>
                 </Button>
-
-                <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelSoftware">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE718;" Margin="0,0,10,0" FontSize="18"/>
-                        <TextBlock Text="Installa Software"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelPortable">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE88E;" Margin="0,0,10,0" FontSize="18"/>
-                        <TextBlock Text="Software Portable"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource MenuButton}" Click="Menu_Click" Tag="PanelStato">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE9D9;" Margin="0,0,10,0" FontSize="18"/>
-                        <TextBlock Text="Stato Sistema"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- AREA CONTENUTO -->
-        <Grid Grid.Column="1" Margin="20">
+        <!-- AREA PRINCIPALE DESTRA -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <!-- Pannelli -->
+                <RowDefinition Height="Auto"/>
+                <!-- Log Console -->
+                <RowDefinition Height="Auto"/>
+                <!-- Barra di stato -->
+            </Grid.RowDefinitions>
 
-            <!-- PANNELLO 1: Manutenzione (I tuoi script) -->
-            <ScrollViewer x:Name="PanelSistema" Visibility="Visible">
-                <StackPanel>
-                    <TextBlock Text="Manutenzione di Sistema" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+            <!-- CONTENITORE PANNELLI LATERIALI -->
+            <Grid Grid.Row="0" Margin="20">
 
-                    <TextBlock Text="Pulizia e Ripristino" Foreground="#007ACC" Margin="0,10,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="SFC Scan" Click="BtnScript_Click" Tag="sfc_scan.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="DISM Restore" Click="BtnScript_Click" Tag="dism_restore.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Clean Temp" Click="BtnScript_Click" Tag="clean_temp.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Disk Cleanup" Click="BtnScript_Click" Tag="disk_cleanup.bat"/>
+                <!-- PANNELLO 1: MANUTENZIONE E BACKUP -->
+                <ScrollViewer x:Name="PanelSistema" Visibility="Visible">
+                    <StackPanel>
+                        <TextBlock Text="Manutenzione e Ottimizzazione" Foreground="{DynamicResource TextColor}" FontSize="26" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="💾 Backup e Sicurezza" Foreground="{DynamicResource AccentColor}" Margin="0,10,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="Crea Punto Ripristino" Click="BtnBackup_Click" Tag="restore_point" Background="#4CAF50" Foreground="White" ToolTip="Crea un punto di ripristino di Windows in background"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Immagine di Sistema" Click="BtnBackup_Click" Tag="system_image" Background="#007ACC" Foreground="White" ToolTip="Apre lo strumento nativo per creare un backup completo del PC"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="Pulizia e Ripristino" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="SFC Scan" Click="BtnScript_Click" Tag="sfc_scan.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="DISM Restore" Click="BtnScript_Click" Tag="dism_restore.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Clean Temp" Click="BtnScript_Click" Tag="clean_temp.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Disk Cleanup" Click="BtnScript_Click" Tag="disk_cleanup.bat"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="Rete e Utility" Foreground="{DynamicResource AccentColor}" Margin="0,10,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="Flush DNS" Click="BtnScript_Click" Tag="flush_dns.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Reset Network" Click="BtnScript_Click" Tag="reset_network.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Check Disk" Click="BtnScript_Click" Tag="chkdsk.bat"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Startup Manager" Click="BtnScript_Click" Tag="startup_manager.bat"/>
+                        </WrapPanel>
+
+                        <!-- SCRIPT PERSONALIZZATI -->
+                        <Border BorderBrush="{DynamicResource AccentColor}" BorderThickness="0,1,0,0" Margin="0,20,0,10" Padding="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Script Personalizzati (Admin)" Foreground="{DynamicResource AccentColor}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                                <TextBlock Text="Inserisci i tuoi .bat o .ps1 nella cartella per aggiungerli qui." Foreground="{DynamicResource TextMutedColor}" Margin="0,0,0,10"/>
+                                <WrapPanel Margin="0,0,0,15">
+                                    <Button Style="{StaticResource ActionBtn}" Content="📂 Apri Cartella" Click="OpenCustomScripts_Click" Background="#4CAF50" Foreground="White"/>
+                                    <Button Style="{StaticResource ActionBtn}" Content="🔄 Ricarica Script" Click="ReloadCustomScripts_Click" Background="#FF9800" Foreground="White"/>
+                                </WrapPanel>
+                                <WrapPanel x:Name="CustomScriptsPanel"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- PANNELLO 2: SOFTWARE NATIVO -->
+                <ScrollViewer x:Name="PanelSoftware" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Installazione Software Nativo" Foreground="{DynamicResource TextColor}" FontSize="26" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Questi programmi vengono installati nativamente nel sistema in background." Foreground="{DynamicResource TextMutedColor}" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="🌐 Browser Web" Foreground="{DynamicResource AccentColor}" Margin="0,10,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="Chrome" Click="BtnSilentInstall_Click" Tag="winget|Google.Chrome"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Firefox" Click="BtnSilentInstall_Click" Tag="winget|Mozilla.Firefox"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Brave" Click="BtnSilentInstall_Click" Tag="winget|Brave.Brave"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Opera GX" Click="BtnSilentInstall_Click" Tag="winget|Opera.OperaGX"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="🛠️ Utility di Sistema" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="7-Zip" Click="BtnSilentInstall_Click" Tag="choco|7zip"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="WinRAR" Click="BtnSilentInstall_Click" Tag="winget|RARLab.WinRAR"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="PowerToys" Click="BtnSilentInstall_Click" Tag="winget|Microsoft.PowerToys"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Notepad++" Click="BtnSilentInstall_Click" Tag="winget|Notepad++.Notepad++"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="🎵 Media &amp; Comunicazione" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="VLC Player" Click="BtnSilentInstall_Click" Tag="choco|vlc"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Spotify" Click="BtnSilentInstall_Click" Tag="winget|Spotify.Spotify"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="OBS Studio" Click="BtnSilentInstall_Click" Tag="winget|OBSProject.OBSStudio"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Discord" Click="BtnSilentInstall_Click" Tag="winget|Discord.Discord"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="💼 Produttività" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="LibreOffice" Click="BtnSilentInstall_Click" Tag="winget|TheDocumentFoundation.LibreOffice"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="VS Code" Click="BtnSilentInstall_Click" Tag="winget|Microsoft.VisualStudioCode"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Acrobat Reader" Click="BtnSilentInstall_Click" Tag="winget|Adobe.Acrobat.Reader.64-bit"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Zoom" Click="BtnSilentInstall_Click" Tag="winget|Zoom.Zoom"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- PANNELLO 3: SOFTWARE PORTABLE (Scoop) -->
+                <ScrollViewer x:Name="PanelPortable" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Software Portabile (Scoop)" Foreground="{DynamicResource TextColor}" FontSize="26" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Installazioni locali. Non richiedono admin e non sporcano il registro di Windows." Foreground="{DynamicResource TextMutedColor}" Margin="0,0,0,10"/>
+
+                        <Button Style="{StaticResource ActionBtn}" Content="⚠️ 1. Inizializza Scoop" Click="BtnSilentInstall_Click" Tag="scoop_init" Width="220" Background="#005A9E" Margin="5,0,0,15" HorizontalAlignment="Left"/>
+
+                        <TextBlock Text="⚙️ Diagnostica &amp; Sistema" Foreground="{DynamicResource AccentColor}" Margin="0,10,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="Rufus (Port)" Click="BtnSilentInstall_Click" Tag="scoop|rufus"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="HWInfo" Click="BtnSilentInstall_Click" Tag="scoop|hwinfo"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="CPU-Z" Click="BtnSilentInstall_Click" Tag="scoop|cpu-z"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="BleachBit" Click="BtnSilentInstall_Click" Tag="scoop|bleachbit"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Sysinternals" Click="BtnSilentInstall_Click" Tag="scoop|sysinternals"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="🎨 Grafica &amp; Media" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="VLC (Port)" Click="BtnSilentInstall_Click" Tag="scoop|vlc"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="GIMP" Click="BtnSilentInstall_Click" Tag="scoop|gimp"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="OBS (Port)" Click="BtnSilentInstall_Click" Tag="scoop|obs-studio"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Krita" Click="BtnSilentInstall_Click" Tag="scoop|krita"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Blender" Click="BtnSilentInstall_Click" Tag="scoop|blender"/>
+                        </WrapPanel>
+
+                        <TextBlock Text="🔧 Utility Generiche" Foreground="{DynamicResource AccentColor}" Margin="0,15,0,5" FontWeight="SemiBold"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource ActionBtn}" Content="7-Zip (Port)" Click="BtnSilentInstall_Click" Tag="scoop|7zip"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="qBittorrent" Click="BtnSilentInstall_Click" Tag="scoop|qbittorrent"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Everything" Click="BtnSilentInstall_Click" Tag="scoop|everything"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Notepad++ (Port)" Click="BtnSilentInstall_Click" Tag="scoop|notepadplusplus"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="Putty" Click="BtnSilentInstall_Click" Tag="scoop|putty"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- PANNELLO 4: STATO SISTEMA -->
+                <Grid x:Name="PanelStato" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Stato Sistema e Analisi" Foreground="{DynamicResource TextColor}" FontSize="26" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+                        <Button Style="{StaticResource ActionBtn}" Content="System Info" Click="BtnSystem_Click" Tag="sysinfo"/>
+                        <Button Style="{StaticResource ActionBtn}" Content="IP Config" Click="BtnSystem_Click" Tag="ipconfig"/>
+                        <Button Style="{StaticResource ActionBtn}" Content="Patch Installate" Click="BtnSystem_Click" Tag="hotfix"/>
+                        <Button Style="{StaticResource ActionBtn}" Content="Pulisci Schermo" Click="BtnSystem_Click" Tag="clear" Background="#666666"/>
                     </WrapPanel>
+                    <Border Grid.Row="2" Background="#0c0c0c" CornerRadius="5" Padding="15">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock x:Name="TxtOutput" Text="Pronto. Clicca un pulsante per interrogare il sistema..." Foreground="#00FF00" FontFamily="Consolas" FontSize="13" TextWrapping="Wrap"/>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
 
-                    <TextBlock Text="Rete e Utility" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="Flush DNS" Click="BtnScript_Click" Tag="flush_dns.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Reset Network" Click="BtnScript_Click" Tag="reset_network.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Check Disk" Click="BtnScript_Click" Tag="chkdsk.bat"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Startup Manager" Click="BtnScript_Click" Tag="startup_manager.bat"/>
-                    </WrapPanel>
-                </StackPanel>
-            </ScrollViewer>
+                <!-- PANNELLO 5: IMPOSTAZIONI -->
+                <Grid x:Name="PanelImpostazioni" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Impostazioni" Foreground="{DynamicResource TextColor}" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
 
-            <!-- PANNELLO 2: Software (Winget & Choco) -->
-            <ScrollViewer x:Name="PanelSoftware" Visibility="Collapsed">
-                <StackPanel>
-                    <TextBlock Text="Gestione Software" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-                    <TextBlock Text="Installazione classica nel sistema operativo." Foreground="Gray" Margin="0,0,0,10"/>
+                        <TextBlock Text="Tema e Aspetto" Foreground="{DynamicResource AccentColor}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <WrapPanel Margin="0,0,0,30">
+                            <Button Style="{StaticResource ActionBtn}" Content="🌙 Tema Scuro" Click="BtnTheme_Click" Tag="Dark"/>
+                            <Button Style="{StaticResource ActionBtn}" Content="☀️ Tema Chiaro" Click="BtnTheme_Click" Tag="Light" Background="#e0e0e0" Foreground="Black"/>
+                        </WrapPanel>
 
-                    <TextBlock Text="Browser" Foreground="#007ACC" Margin="0,10,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="Chrome" Click="BtnScript_Click" Tag="winget:Google.Chrome"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Firefox" Click="BtnScript_Click" Tag="winget:Mozilla.Firefox"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Brave" Click="BtnScript_Click" Tag="winget:Brave.Brave"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Opera GX" Click="BtnScript_Click" Tag="winget:Opera.OperaGX"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Utility" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="7-Zip" Click="BtnScript_Click" Tag="choco:7zip"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="WinRAR" Click="BtnScript_Click" Tag="winget:RARLab.WinRAR"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="PowerToys" Click="BtnScript_Click" Tag="winget:Microsoft.PowerToys"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Notepad++" Click="BtnScript_Click" Tag="choco:notepadplusplus"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Media &amp; Intrattenimento" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="VLC" Click="BtnScript_Click" Tag="choco:vlc"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Spotify" Click="BtnScript_Click" Tag="winget:Spotify.Spotify"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="OBS Studio" Click="BtnScript_Click" Tag="winget:OBSProject.OBSStudio"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Audacity" Click="BtnScript_Click" Tag="winget:Audacity.Audacity"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Produttività" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="LibreOffice" Click="BtnScript_Click" Tag="winget:TheDocumentFoundation.LibreOffice"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="VS Code" Click="BtnScript_Click" Tag="winget:Microsoft.VisualStudioCode"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Acrobat Reader" Click="BtnScript_Click" Tag="winget:Adobe.Acrobat.Reader.64-bit"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Zoom" Click="BtnScript_Click" Tag="winget:Zoom.Zoom"/>
-                    </WrapPanel>
-                </StackPanel>
-            </ScrollViewer>
-
-            <!-- PANNELLO 3: Software Portabile (Scoop) -->
-            <ScrollViewer x:Name="PanelPortable" Visibility="Collapsed">
-                <StackPanel>
-                    <TextBlock Text="Software Portabile" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-                    <TextBlock Text="Non toccano il registro e non richiedono diritti di amministratore." Foreground="Gray" Margin="0,0,0,10"/>
-
-                    <!-- Pulsante fondamentale per far funzionare Scoop e aggiungere il repository "extras" -->
-                    <Button Style="{StaticResource ActionBtn}" Content="🛠️ Installa Scoop" Click="BtnScript_Click" Tag="scoop_init" Width="180" Background="#005A9E"/>
-
-                    <TextBlock Text="Sistema &amp; Diagnostica" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="Rufus" Click="BtnScript_Click" Tag="scoop:rufus"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="HWInfo" Click="BtnScript_Click" Tag="scoop:hwinfo"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="CPU-Z" Click="BtnScript_Click" Tag="scoop:cpu-z"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="BleachBit" Click="BtnScript_Click" Tag="scoop:bleachbit"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Grafica &amp; Media" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="VLC Portable" Click="BtnScript_Click" Tag="scoop:vlc"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="GIMP" Click="BtnScript_Click" Tag="scoop:gimp"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="OBS Portable" Click="BtnScript_Click" Tag="scoop:obs-studio"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Krita" Click="BtnScript_Click" Tag="scoop:krita"/>
-                    </WrapPanel>
-
-                    <TextBlock Text="Utility Varie" Foreground="#007ACC" Margin="0,20,0,5"/>
-                    <WrapPanel>
-                        <Button Style="{StaticResource ActionBtn}" Content="7-Zip Portable" Click="BtnScript_Click" Tag="scoop:7zip"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="qBittorrent" Click="BtnScript_Click" Tag="scoop:qbittorrent"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Everything" Click="BtnScript_Click" Tag="scoop:everything"/>
-                        <Button Style="{StaticResource ActionBtn}" Content="Notepad++" Click="BtnScript_Click" Tag="scoop:notepadplusplus"/>
-                    </WrapPanel>
-                </StackPanel>
-            </ScrollViewer>
-
-            <!-- PANNELLO 4: Stato Sistema Integrato -->
-            <Grid x:Name="PanelStato" Visibility="Collapsed">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Text="Analisi e Stato del Sistema" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-
-                <WrapPanel Grid.Row="1" Margin="0,0,0,10">
-                    <Button Style="{StaticResource ActionBtn}" Content="System Info" Click="BtnSystem_Click" Tag="sysinfo"/>
-                    <Button Style="{StaticResource ActionBtn}" Content="IP Config" Click="BtnSystem_Click" Tag="ipconfig"/>
-                    <Button Style="{StaticResource ActionBtn}" Content="Patch Installate" Click="BtnSystem_Click" Tag="hotfix"/>
-                    <Button Style="{StaticResource ActionBtn}" Content="Pulisci Schermo" Click="BtnSystem_Click" Tag="clear"/>
-                </WrapPanel>
-
-                <!-- Schermo nero per l'output -->
-                <Border Grid.Row="2" Background="#0c0c0c" CornerRadius="5" Padding="10">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <TextBlock x:Name="TxtOutput" Text="Pronto. Clicca un pulsante per interrogare il sistema..." 
-                                   Foreground="#00FF00" FontFamily="Consolas" TextWrapping="Wrap"/>
-                    </ScrollViewer>
-                </Border>
+                        <TextBlock Text="Informazioni Software" Foreground="{DynamicResource AccentColor}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <Border Background="{DynamicResource CardColor}" CornerRadius="8" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="WinToolkit Pro v5.0" Foreground="{DynamicResource TextColor}" FontWeight="Bold" FontSize="18"/>
+                                <TextBlock Text="Utility di manutenzione avanzata per sistemi Windows." Foreground="{DynamicResource TextMutedColor}" Margin="0,5,0,15"/>
+                                <Button Content="🌐 Visita AngolodiWindows.com" Click="OpenWebsite_Click" Cursor="Hand" Background="Transparent" Foreground="{DynamicResource AccentColor}" BorderThickness="0" HorizontalAlignment="Left" FontSize="16" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </Grid>
+
+            <!-- CONSOLE LOG INTEGRATA -->
+            <Border Grid.Row="1" x:Name="LogContainer" Visibility="Collapsed" Background="#0c0c0c" BorderThickness="0,2,0,0" BorderBrush="{DynamicResource AccentColor}">
+                <Grid Height="200">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#252526" Padding="10,5">
+                        <Grid>
+                            <TextBlock Text="Console Operazioni (In tempo reale)" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Button Content="Chiudi" Click="CloseLog_Click" HorizontalAlignment="Right" Background="Transparent" Foreground="White" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                        </Grid>
+                    </Border>
+
+                    <TextBox Grid.Row="1" x:Name="TxtLog" Background="#0c0c0c" Foreground="#00FF00" FontFamily="Consolas" FontSize="13" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" BorderThickness="0" Padding="10"/>
+                </Grid>
+            </Border>
+
+            <!-- BARRA DI STATO E PROGRESSO -->
+            <Border Grid.Row="2" Background="{DynamicResource SidebarColor}" Padding="15,10" BorderThickness="0,1,0,0" BorderBrush="#333333" MouseLeftButtonDown="Status_Click" Cursor="Hand">
+                <Grid>
+                    <TextBlock x:Name="TxtStatus" Text="Pronto all'uso. Clicca qui per espandere o nascondere la console." Foreground="{DynamicResource TextMutedColor}" VerticalAlignment="Center"/>
+                    <ProgressBar x:Name="ProgBar" Width="200" Height="10" HorizontalAlignment="Right" Visibility="Hidden" Foreground="{DynamicResource AccentColor}" Background="{DynamicResource BgColor}"/>
+                </Grid>
+            </Border>
 
         </Grid>
     </Grid>

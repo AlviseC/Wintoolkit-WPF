@@ -4,119 +4,249 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
-namespace WinToolkitWPF
+namespace Wintoolkit_
 {
     public partial class MainWindow : Window
     {
+        private readonly string CustomScriptsPath;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            CustomScriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "custom");
+            LoadCustomScripts();
         }
 
-        // --- GESTIONE DELLA NAVIGAZIONE DEL MENÙ ---
         private void Menu_Click(object sender, RoutedEventArgs e)
         {
-            // Nascondi tutti i pannelli
             PanelSistema.Visibility = Visibility.Collapsed;
             PanelSoftware.Visibility = Visibility.Collapsed;
             PanelPortable.Visibility = Visibility.Collapsed;
             PanelStato.Visibility = Visibility.Collapsed;
+            PanelImpostazioni.Visibility = Visibility.Collapsed;
 
-            // Mostra il pannello corrispondente al Tag del bottone cliccato
-            string targetPanel = (sender as Button)?.Tag.ToString();
-
-            if (targetPanel == "PanelSistema") PanelSistema.Visibility = Visibility.Visible;
-            else if (targetPanel == "PanelSoftware") PanelSoftware.Visibility = Visibility.Visible;
-            else if (targetPanel == "PanelPortable") PanelPortable.Visibility = Visibility.Visible;
-            else if (targetPanel == "PanelStato") PanelStato.Visibility = Visibility.Visible;
+            if (sender is Button btn && btn.Tag != null)
+            {
+                string target = btn.Tag.ToString() ?? "";
+                if (target == "PanelSistema") PanelSistema.Visibility = Visibility.Visible;
+                else if (target == "PanelSoftware") PanelSoftware.Visibility = Visibility.Visible;
+                else if (target == "PanelPortable") PanelPortable.Visibility = Visibility.Visible;
+                else if (target == "PanelStato") PanelStato.Visibility = Visibility.Visible;
+                else if (target == "PanelImpostazioni") PanelImpostazioni.Visibility = Visibility.Visible;
+            }
         }
 
-        // --- GESTIONE SCRIPT E INSTALLAZIONI ESTERNE ---
+        private void LoadCustomScripts()
+        {
+            CustomScriptsPanel.Children.Clear();
+            try
+            {
+                if (!Directory.Exists(CustomScriptsPath)) Directory.CreateDirectory(CustomScriptsPath);
+
+                string[] files = Directory.GetFiles(CustomScriptsPath);
+                foreach (string file in files)
+                {
+                    if (file.EndsWith(".bat", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Button btn = new Button
+                        {
+                            Content = Path.GetFileNameWithoutExtension(file),
+                            Tag = file,
+                            Style = (Style)FindResource("ActionBtn"),
+                            Background = new SolidColorBrush(Color.FromRgb(85, 85, 85))
+                        };
+                        btn.Click += (s, ev) => RunScriptInWindow(file);
+                        CustomScriptsPanel.Children.Add(btn);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Errore durante il caricamento degli script: " + ex.Message);
+            }
+        }
+
         private void BtnScript_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is string action)
             {
-                try
-                {
-                    if (action.StartsWith("winget:"))
-                    {
-                        string appId = action.Replace("winget:", "");
-                        RunProcessExternal("cmd.exe", $"/c color 0B & winget install --id {appId} -e --accept-source-agreements & pause");
-                    }
-                    else if (action.StartsWith("choco:"))
-                    {
-                        string appId = action.Replace("choco:", "");
-                        RunProcessExternal("cmd.exe", $"/c color 0D & choco install {appId} -y & pause");
-                    }
-                    else if (action == "scoop_init")
-                    {
-                        string scoopCmd = "-NoProfile -ExecutionPolicy Bypass -Command \"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression; scoop bucket add extras; pause\"";
-                        RunProcessExternal("powershell.exe", scoopCmd);
-                    }
-                    else if (action.StartsWith("scoop:"))
-                    {
-                        string appId = action.Replace("scoop:", "");
-                        RunProcessExternal("cmd.exe", $"/c color 0A & scoop install {appId} & pause");
-                    }
-                    else // I tuoi file .bat originari
-                    {
-                        string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", action);
-                        if (!File.Exists(scriptPath))
-                        {
-                            MessageBox.Show("File non trovato: " + scriptPath);
-                            return;
-                        }
+                string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", action);
+                if (File.Exists(scriptPath)) RunScriptInWindow(scriptPath);
+                else MessageBox.Show("Impossibile trovare il file: " + scriptPath);
+            }
+        }
 
-                        bool isPs = action.EndsWith(".ps1");
-                        string args = isPs ? $"-ExecutionPolicy Bypass -File \"{scriptPath}\"" : $"/c \"{scriptPath}\"";
-                        RunProcessExternal(isPs ? "powershell.exe" : "cmd.exe", args);
-                    }
-                }
-                catch (Exception ex)
+        private void RunScriptInWindow(string path)
+        {
+            try
+            {
+                bool isPs = path.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase);
+                Process.Start(new ProcessStartInfo
                 {
-                    MessageBox.Show("Errore: " + ex.Message);
+                    FileName = isPs ? "powershell.exe" : "cmd.exe",
+                    Arguments = isPs ? $"-NoProfile -ExecutionPolicy Bypass -File \"{path}\"" : $"/c \"{path}\"",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Esecuzione annullata: " + ex.Message);
+            }
+        }
+
+        private void OpenCustomScripts_Click(object s, RoutedEventArgs e) => Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = CustomScriptsPath });
+        private void ReloadCustomScripts_Click(object s, RoutedEventArgs e) => LoadCustomScripts();
+
+        private async void BtnBackup_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string action)
+            {
+                if (action == "restore_point")
+                {
+                    btn.IsEnabled = false;
+                    ProgBar.Visibility = Visibility.Visible;
+                    ProgBar.IsIndeterminate = true;
+                    TxtStatus.Text = "Creazione punto di ripristino in corso (in background)...";
+
+                    LogContainer.Visibility = Visibility.Visible;
+                    TxtLog.AppendText($"\n\n--- [{DateTime.Now.ToShortTimeString()}] Creazione Punto di Ripristino avviata ---\n");
+
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            // Avviamo PowerShell nascosto ma con permessi admin senza intercettare l'output (che causava crash sui sistemi blindati)
+                            ProcessStartInfo psi = new ProcessStartInfo
+                            {
+                                FileName = "powershell.exe",
+                                Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Enable-ComputerRestore -Drive 'C:\'; Checkpoint-Computer -Description 'WinToolkit Manual Backup' -RestorePointType 'MODIFY_SETTINGS'\"",
+                                UseShellExecute = true,
+                                WindowStyle = ProcessWindowStyle.Hidden,
+                                Verb = "runas"
+                            };
+
+                            using (Process process = Process.Start(psi))
+                            {
+                                process?.WaitForExit();
+                            }
+                            Dispatcher.Invoke(() => TxtLog.AppendText("Operazione conclusa da Windows.\n"));
+                        }
+                        catch (Exception ex)
+                        {
+                            Dispatcher.Invoke(() => TxtLog.AppendText($"[ERRORE] {ex.Message}\n"));
+                        }
+                    });
+
+                    TxtStatus.Text = "Comando punto di ripristino inviato al sistema.";
+                    ProgBar.Visibility = Visibility.Hidden;
+                    btn.IsEnabled = true;
+                }
+                else if (action == "system_image")
+                {
+                    TxtStatus.Text = "Apertura strumento Backup e Ripristino di Windows...";
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo { FileName = "sdclt.exe", UseShellExecute = true });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Impossibile avviare lo strumento: " + ex.Message);
+                    }
                 }
             }
         }
 
-        private void RunProcessExternal(string fileName, string args)
+        private async void BtnSilentInstall_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo
+            if (sender is Button btn && btn.Tag is string action)
             {
-                FileName = fileName,
-                Arguments = args,
-                UseShellExecute = true,
-                Verb = "runas" // Richiede UAC
-            });
+                string appName = btn.Content?.ToString() ?? "Software";
+                btn.IsEnabled = false;
+                ProgBar.Visibility = Visibility.Visible;
+                ProgBar.IsIndeterminate = true;
+                TxtStatus.Text = $"Installazione di {appName} in corso...";
+
+                TxtLog.AppendText($"\n\n--- [{DateTime.Now.ToShortTimeString()}] Avvio operazione: {appName} ---\n");
+                LogContainer.Visibility = Visibility.Visible;
+
+                await Task.Run(() =>
+                {
+                    string file = "powershell.exe";
+                    string args = "";
+
+                    if (action == "scoop_init")
+                    {
+                        args = "-NoProfile -ExecutionPolicy Bypass -Command \"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex (new-object net.webclient).downloadstring('https://get.scoop.sh'); scoop bucket add extras\"";
+                    }
+                    else
+                    {
+                        string[] parts = action.Split('|');
+                        if (parts.Length < 2) return;
+
+                        string manager = parts[0];
+                        string id = parts[1];
+
+                        if (manager == "winget") args = $"-NoProfile -Command \"winget install --id {id} -e --silent --accept-package-agreements --accept-source-agreements\"";
+                        else if (manager == "choco") args = $"-NoProfile -Command \"choco install {id} -y\"";
+                        else if (manager == "scoop") args = $"-NoProfile -Command \"scoop install {id}\"";
+                    }
+
+                    ProcessStartInfo psi = new ProcessStartInfo
+                    {
+                        FileName = file,
+                        Arguments = args,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    using (Process process = new Process { StartInfo = psi })
+                    {
+                        process.OutputDataReceived += (s, ev) => Dispatcher.Invoke(() => {
+                            if (!string.IsNullOrEmpty(ev.Data)) { TxtLog.AppendText(ev.Data + "\n"); TxtLog.ScrollToEnd(); }
+                        });
+                        process.ErrorDataReceived += (s, ev) => Dispatcher.Invoke(() => {
+                            if (!string.IsNullOrEmpty(ev.Data)) { TxtLog.AppendText("[ERRORE] " + ev.Data + "\n"); TxtLog.ScrollToEnd(); }
+                        });
+
+                        process.Start();
+                        process.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
+                        process.WaitForExit();
+                    }
+                });
+
+                if (action.Contains("scoop"))
+                {
+                    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scoop", "apps");
+                    TxtLog.AppendText($"\n[INFO] I software portable Scoop si trovano in: {path}\n");
+                }
+
+                TxtStatus.Text = $"{appName} installato correttamente!";
+                ProgBar.Visibility = Visibility.Hidden;
+                btn.IsEnabled = true;
+            }
         }
 
-        // --- GESTIONE OUTPUT INTEGRATO A SCHERMO (STATO SISTEMA) ---
         private async void BtnSystem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is string action)
             {
-                if (action == "clear")
-                {
-                    TxtOutput.Text = "Pronto. Clicca un pulsante per interrogare il sistema...";
-                    return;
-                }
+                if (action == "clear") { TxtOutput.Text = "Pronto. Clicca un pulsante per interrogare il sistema..."; return; }
 
-                // Disabilita il bottone temporaneamente e avvisa l'utente
                 btn.IsEnabled = false;
-                TxtOutput.Text = "Analisi in corso... Attendere prego (il caricamento di System Info può richiedere fino a un minuto).\n\n";
+                TxtOutput.Text = "Analisi in corso... attendere prego.\n(La raccolta dei dati può impiegare alcuni secondi).";
 
                 string fileName = "cmd.exe";
                 string args = "";
 
-                if (action == "sysinfo")
-                {
-                    args = "/c systeminfo";
-                }
-                else if (action == "ipconfig")
-                {
-                    args = "/c ipconfig /all";
-                }
+                if (action == "sysinfo") args = "/c systeminfo";
+                else if (action == "ipconfig") args = "/c ipconfig /all";
                 else if (action == "hotfix")
                 {
                     fileName = "powershell.exe";
@@ -125,43 +255,68 @@ namespace WinToolkitWPF
 
                 try
                 {
-                    // Lancia il comando in un Task asincrono per non congelare la grafica
-                    string result = await Task.Run(() =>
+                    string result = await Task.Run(async () =>
                     {
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
                             FileName = fileName,
                             Arguments = args,
-                            UseShellExecute = false, // Obbligatorio per reindirizzare l'output
+                            UseShellExecute = false,
                             RedirectStandardOutput = true,
-                            RedirectStandardError = true, // Catturiamo anche gli errori
-                            CreateNoWindow = true,
-                            StandardOutputEncoding = System.Text.Encoding.GetEncoding(850)
+                            RedirectStandardError = true,
+                            CreateNoWindow = true
                         };
 
-                        using (Process process = Process.Start(psi))
-                        {
-                            // Legge sia l'output che eventuali errori di sistema
-                            string output = process.StandardOutput.ReadToEnd();
-                            string err = process.StandardError.ReadToEnd();
-                            process.WaitForExit();
+                        using var process = new Process { StartInfo = psi };
+                        process.Start();
+                        string output = await process.StandardOutput.ReadToEndAsync();
+                        string error = await process.StandardError.ReadToEndAsync();
+                        process.WaitForExit();
 
-                            return string.IsNullOrWhiteSpace(output) ? err : output;
-                        }
+                        return string.IsNullOrWhiteSpace(output) ? error : output;
                     });
-
-                    TxtOutput.Text = string.IsNullOrWhiteSpace(result) ? "Nessun output ricevuto." : result;
+                    TxtOutput.Text = result;
                 }
                 catch (Exception ex)
                 {
-                    TxtOutput.Text = $"Si è verificato un errore:\n{ex.Message}";
+                    TxtOutput.Text = "Si è verificato un errore critico: " + ex.Message;
                 }
                 finally
                 {
-                    // Riabilita il bottone una volta finito
                     btn.IsEnabled = true;
                 }
             }
+        }
+
+        private void Status_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            LogContainer.Visibility = LogContainer.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void CloseLog_Click(object sender, RoutedEventArgs e)
+        {
+            LogContainer.Visibility = Visibility.Collapsed;
+        }
+
+        private void BtnTheme_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag != null)
+            {
+                bool dark = btn.Tag.ToString() == "Dark";
+                Resources["BgColor"] = new SolidColorBrush(dark ? Color.FromRgb(30, 30, 30) : Color.FromRgb(240, 240, 240));
+                Resources["SidebarColor"] = new SolidColorBrush(dark ? Color.FromRgb(37, 37, 38) : Color.FromRgb(220, 220, 220));
+                Resources["CardColor"] = new SolidColorBrush(dark ? Color.FromRgb(45, 45, 48) : Color.FromRgb(255, 255, 255));
+                Resources["TextColor"] = new SolidColorBrush(dark ? Colors.White : Colors.Black);
+            }
+        }
+
+        private void OpenWebsite_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://angolodiwindows.com",
+                UseShellExecute = true
+            });
         }
     }
 }
