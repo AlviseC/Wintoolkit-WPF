@@ -7,6 +7,8 @@
 **WinToolkit Pro** è un'applicazione desktop avanzata scritta in C# (WPF) progettata per semplificare la manutenzione del sistema, il backup e la gestione dei software su Windows. 
 Nata come estensione del progetto [Angolo di Windows](https://angolodiwindows.com), offre un'interfaccia grafica moderna e pulita per eseguire operazioni complesse da riga di comando senza dover mai aprire il terminale.
 
+La versione attualmente è BETA, questo per verificare la presenza di bug o malfunzionamenti.
+
 ---
 
 ## ✨ Funzionalità Principali
@@ -65,5 +67,5 @@ Questo strumento esegue operazioni di sistema a livello amministrativo. Sebbene 
 
 ### 🌐 Riferimenti
 
-Progetto sviluppato e mantenuto per **[Angolo di Windows](https://angolodiwindows.com)**.  
+Progetto sviluppato e mantenuto:  **[Angolo di Windows](https://angolodiwindows.com)**.  
 Sentiti libero di aprire una *Issue* o inviare una *Pull Request* per suggerire nuove funzionalità!
