@@ -23,6 +23,10 @@ La versione attualmente è BETA, questo per verificare la presenza di bug o malf
 
 ---
 
+![Schermata Home](https://angolodiwindows.com/wp-content/uploads/2026/05/Screenshot-2026-05-09-091819.png)
+![Installazione Software](https://angolodiwindows.com/wp-content/uploads/2026/05/Screenshot-2026-05-09-091824.png)
+![Stato Sistema e Analisi](https://angolodiwindows.com/wp-content/uploads/2026/05/Screenshot-2026-05-09-091824.png)
+
 ## 📂 Script Personalizzati (Modalità Avanzata)
 
 WinToolkit Pro è espandibile! Non sei limitato ai comandi predefiniti.
